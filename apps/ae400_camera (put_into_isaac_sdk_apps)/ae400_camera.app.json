@@ -1,0 +1,285 @@
+{
+  "name": "ae400_camera",
+  "modules": [
+    "ae400",
+    "rgbd_processing",
+    "sight",
+    "viewers",
+    "imu"
+  ],
+  "config": {
+    "camera": {
+      "ae400": {
+        "rows": 480,
+        "cols": 640,
+        "depth_framerate": 30,
+        "ir_framerate": 30,
+        "color_framerate": 30,
+        "enable_depth": true,
+        "enable_ir_stereo": true,
+        "enable_color": true,
+        "align_to_color": true,
+        "rates_printer": false,
+        "post_processing": false,
+        "enable_imu": true,
+        "frame_queue_size": 2,
+        "auto_exposure_priority": false
+      }
+    },
+    "viewer": {
+      "color": {
+        "reduce_scale": 2,
+        "camera_name": "AE400 Color"
+      },
+      "depth": {
+        "reduce_scale": 2,
+        "min_visualization_depth": 0.2,
+        "max_visualization_depth": 5.0,
+        "camera_name": "AE400 Depth",
+        "colormap": [
+          [128,   0,   0],
+          [255,   0,   0],
+          [255, 255,   0],
+          [0,   255, 255],
+          [0,     0, 255],
+          [0,     0, 128]
+        ]
+      },
+      "left_ir": {
+        "camera_name": "AE400 Left IR",
+        "reduce_scale": 2
+      },
+      "right_ir": {
+        "camera_name": "AE400 Right IR",
+        "reduce_scale": 2
+      }
+    },
+    "point_cloud": {
+      "depth_to_pointcloud": {
+        "use_color": true
+      }
+    },
+    "websight": {
+      "WebsightServer": {
+        "webroot": "packages/sight/webroot",
+        "assetroot": "external/isaac_assets",
+        "port": 3000,
+        "ui_config": {
+          "windows": {
+            "AE400 - Left IR": {
+              "renderer": "2d",
+              "dims": {
+                "width": 640,
+                "height": 480
+              },
+              "channels": [
+                {
+                  "name": "ae400_camera/viewer/left_ir/image"
+                }
+              ]
+            },
+            "AE400 - Right IR": {
+              "renderer": "2d",
+              "dims": {
+                "width": 640,
+                "height": 480
+              },
+              "channels": [
+                {
+                  "name": "ae400_camera/viewer/right_ir/image"
+                }
+              ]
+            },
+            "AE400 - Color": {
+              "renderer": "2d",
+              "dims": {
+                "width": 640,
+                "height": 480
+              },
+              "channels": [
+                {
+                  "name": "ae400_camera/viewer/color/image"
+                }
+              ]
+            },
+            "AE400 - Depth": {
+              "renderer": "2d",
+              "dims": {
+                "width": 640,
+                "height": 480
+              },
+              "channels": [
+                {
+                  "name": "ae400_camera/viewer/depth/Depth"
+                }
+              ]
+            },
+            "AE400 - Points": {
+              "renderer": "3d",
+              "dims": {
+                "width": 640,
+                "height": 480
+              },
+              "channels": [
+                {
+                  "name": "ae400_camera/point_cloud/viewer/points"
+                }
+              ]
+            },
+            "AE400 - Imu - CorrectedAngularVelocity": {
+              "renderer": "plot",
+              "dims": {
+                "width": 500,
+                "height": 500
+              },
+              "channels": [
+                {
+                  "name": "ae400_camera/imu/imu_corrector/CorrectedAngularVelocity.x"
+                },
+                {
+                  "name": "ae400_camera/imu/imu_corrector/CorrectedAngularVelocity.y"
+                },
+                {
+                  "name": "ae400_camera/imu/imu_corrector/CorrectedAngularVelocity.z"
+                }
+              ]
+            },
+            "AE400 - imu - CorrectedLinearAcceleration": {
+              "renderer": "plot",
+              "dims": {
+                "width": 500,
+                "height": 500
+              },
+              "channels": [
+                {
+                  "name": "ae400_camera/imu/imu_corrector/CorrectedLinearAcceleration.x"
+                },
+                {
+                  "name": "ae400_camera/imu/imu_corrector/CorrectedLinearAcceleration.y"
+                },
+                {
+                  "name": "ae400_camera/imu/imu_corrector/CorrectedLinearAcceleration.z"
+                }
+              ]
+            }
+          },
+          "assets": {}
+        }
+      }
+    }
+  },
+  "graph": {
+    "nodes": [
+      {
+        "name": "camera",
+        "components": [
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "ae400",
+            "type": "isaac::lips::AE400Camera"
+          }
+        ]
+      },
+      {
+        "name": "viewer",
+        "components": [
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "depth",
+            "type": "isaac::viewers::DepthCameraViewer"
+          },
+          {
+            "name": "color",
+            "type": "isaac::viewers::ImageViewer"
+          },
+          {
+            "name": "left_ir",
+            "type": "isaac::viewers::ImageViewer"
+          },
+          {
+            "name": "right_ir",
+            "type": "isaac::viewers::ImageViewer"
+          }
+        ]
+      },
+      {
+        "name":"imu",
+        "components": [
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "imu_corrector",
+            "type": "isaac::imu::ImuCorrector"
+          }
+        ]
+      },
+      {
+        "name": "point_cloud",
+        "components": [
+          {
+            "name": "message_ledger",
+            "type": "isaac::alice::MessageLedger"
+          },
+          {
+            "name": "depth_to_pointcloud",
+            "type": "isaac::rgbd_processing::DepthImageToPointCloud"
+          },
+          {
+            "name": "viewer",
+            "type": "isaac::viewers::PointCloudViewer"
+          }
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "camera/ae400/depth",
+        "target": "viewer/depth/depth"
+      },
+      {
+        "source": "camera/ae400/depth_intrinsics",
+        "target": "viewer/depth/intrinsics"
+      },
+      {
+        "source": "camera/ae400/color",
+        "target": "viewer/color/image"
+      },
+      {
+        "source": "camera/ae400/left_ir",
+        "target": "viewer/left_ir/image"
+      },
+      {
+        "source": "camera/ae400/right_ir",
+        "target": "viewer/right_ir/image"
+      },
+      {
+        "source": "camera/ae400/depth",
+        "target": "point_cloud/depth_to_pointcloud/depth"
+      },
+      {
+        "source": "camera/ae400/depth_intrinsics",
+        "target": "point_cloud/depth_to_pointcloud/intrinsics"
+      },
+      {
+        "source": "camera/ae400/color",
+        "target": "point_cloud/depth_to_pointcloud/color"
+      },
+      {
+        "source": "point_cloud/depth_to_pointcloud/cloud",
+        "target": "point_cloud/viewer/cloud"
+      },
+      {
+        "source": "camera/ae400/imu_raw",
+        "target": "imu/imu_corrector/raw"
+      }
+    ]
+  }
+}
