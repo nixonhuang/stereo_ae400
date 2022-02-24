@@ -27,6 +27,8 @@ exports_files([
 # RS codebase now is v2.43.0
 # v1.0.2.0 for RS codebase v2.43~v2.48
 # v1.0.2.5 for RS codebase v2.49~v2.50
+
+
 cc_library(
     name = "libbackend_ethernet",
     srcs = glob(
@@ -109,7 +111,7 @@ cc_library(
         "common/utilities/time/l500/get-mfr-ww.h",
         "common/utilities/time/work_week.h",
         "third-party/stb_image.h",
-        "common/decompress-huffman.h",
+        "common/decompress-huffman.h"
     ],
     hdrs = glob([
         "include/librealsense2/**/*.h*",

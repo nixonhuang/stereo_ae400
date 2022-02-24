@@ -27,7 +27,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 load("@com_nvidia_isaac_engine//bzl:deps.bzl", "isaac_http_archive")
-load("@com_nvidia_isaac_engine//bzl:deps.bzl", "isaac_new_git_repository")
+load("@com_nvidia_isaac_engine//bzl:deps.bzl", "isaac_new_git_repository", "isaac_new_local_repository")
 
 def clean_dep(dep):
     return str(Label(dep))
@@ -49,3 +49,4 @@ def ae400_workspace():
         build_file = clean_dep("//third_party:ae400.BUILD"),
         licenses = ["@ae400_realsense_sdk//:LICENSE"],
     )
+
